@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KAAAND | Exhibit-1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-red: #D00000;
+            --brand-dark: #8B0000;
+            --white: #FFFFFF;
+            --black: #000000;
+            --grid-color: rgba(0, 0, 0, 0.12);
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--brand-red);
+            font-family: 'Inter', sans-serif;
+            color: var(--white);
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            
+            /* Combined blurred radial gradient and static grid */
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
+                radial-gradient(circle at center, var(--brand-red) 0%, var(--brand-dark) 100%);
+            background-size: 50px 50px, 50px 50px, 100% 100%;
+            background-position: center center;
+        }
+
+        /* Subtle grain texture for an editorial finish */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            padding: 0 1.5rem;
+            max-width: 900px;
+        }
+
+        .issue-label {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 800;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            padding: 0.6rem 1.4rem;
+            border: 1px solid var(--white);
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: revealUp 0.8s var(--ease) 0.2s forwards;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .logo {
+            font-size: clamp(3.2rem, 18vw, 11rem);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            color: var(--white);
+            line-height: 0.85;
+            margin-bottom: 1.5rem;
+            user-select: none;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: revealUp 1s var(--ease) 0.4s forwards;
+        }
+
+        .tagline {
+            font-size: clamp(0.7rem, 2vw, 1rem);
+            font-weight: 600;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            margin-bottom: 4rem;
+            opacity: 0;
+            animation: fadeIn 1s var(--ease) 0.8s forwards;
+        }
+
+        .form-container {
+            max-width: 380px;
+            margin: 0 auto;
+            width: 100%;
+            opacity: 0;
+            animation: fadeIn 1.2s var(--ease) 1s forwards;
+        }
+
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 1.25rem 0;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 0;
+            color: var(--white);
+            font-size: 16px; 
+            text-align: center;
+            outline: none;
+            transition: all 0.3s var(--ease);
+            letter-spacing: 0.05em;
+        }
+
+        input[type="email"]:focus {
+            border-bottom-color: var(--white);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        input[type="email"]::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+        }
+
+        button {
+            width: 100%;
+            padding: 1.25rem;
+            background: var(--white);
+            color: var(--black);
+            border: none;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s var(--ease);
+        }
+
+        button:hover {
+            background: var(--black);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .success-message {
+            display: none;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 2.5rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            z-index: 10;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        /* Animations */
+        @keyframes revealUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body { background-size: 40px 40px, 40px 40px, 100% 100%; }
+            .logo { letter-spacing: -0.02em; margin-bottom: 1rem; }
+            .tagline { letter-spacing: 0.3em; margin-bottom: 3rem; }
+            .footer { 
+                padding: 0 2rem;
+                flex-direction: column; 
+                align-items: center; 
+                gap: 0.8rem; 
+                bottom: 2rem;
+                text-align: center;
+            }
+            .dot { display: none; }
+        }
+
+        @media (max-height: 750px) {
+            .logo { margin-bottom: 1rem; }
+            .tagline { margin-bottom: 2rem; }
+            .footer { bottom: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="issue-label">Exhibit-1 Coming Soon</div>
+            <h1 class="logo">KAAAND</h1>
+            <p class="tagline">Culture &bull; Chaos &bull; Content</p>
+        </header>
+
+        <div class="form-container">
+            <form class="signup-form" id="notifyForm">
+                <input type="email" id="email" placeholder="YOUR EMAIL ADDRESS" required autocomplete="email">
+                <button type="submit" id="submitBtn">Notify Me</button>
+            </form>
+            <div id="successMsg" class="success-message">Added to the list.</div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <span>Est. 2026</span>
+        <span class="dot">&bull;</span>
+        <span>Unfiltered Editorial</span>
+        <span class="dot">&bull;</span>
+        <span>Worldwide</span>
+    </footer>
+
+    <script>
+        document.getElementById('notifyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const form = document.getElementById('notifyForm');
+            const success = document.getElementById('successMsg');
+            
+            btn.innerHTML = "Processing...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                form.style.display = 'none';
+                success.style.display = 'block';
+                success.style.opacity = '1';
+            }, 800);
+        });
+    </script>
+</body>
+</html>
