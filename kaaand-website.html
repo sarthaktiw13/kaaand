@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAAAND — Issue 00</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;1,400;1,700&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f0ece4;
+    --red: #c8391a;
+    --yellow: #d4b84a;
+    --gray: #2a2a2a;
+    --mid: #888880;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-serif: 'Playfair Display', serif;
+    --font-body: 'Space Grotesk', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-weight: 300;
+    cursor: crosshair;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    background: var(--black);
+    border-bottom: 1px solid #1f1f1f;
+    mix-blend-mode: normal;
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: 0.12em;
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--red); }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-issue {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 5px 12px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .nav-issue:hover {
+    background: var(--red);
+    color: var(--black);
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    display: none;
+    padding-top: 64px;
+    min-height: 100vh;
+  }
+
+  section.active { display: block; }
+
+  /* ─── TICKER ─── */
+  .ticker {
+    background: var(--red);
+    overflow: hidden;
+    padding: 8px 0;
+    white-space: nowrap;
+  }
+
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 18s linear infinite;
+  }
+
+  .ticker span {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--black);
+    text-transform: uppercase;
+    padding: 0 40px;
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ─── HERO (EDITORIAL) ─── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 64px);
+    border-bottom: 1px solid #1f1f1f;
+  }
+
+  .hero-left {
+    border-right: 1px solid #1f1f1f;
+    padding: 60px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .hero-kicker {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(72px, 8vw, 120px);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    margin-bottom: 32px;
+  }
+
+  .hero-title em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--yellow);
+    font-size: 0.8em;
+  }
+
+  .hero-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--mid);
+    max-width: 440px;
+    margin-bottom: 48px;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: 1px solid #333;
+    padding: 5px 10px;
+    color: var(--mid);
+  }
+
+  .hero-right {
+    position: relative;
+    background: #111;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 48px;
+  }
+
+  .hero-img-placeholder {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #1a1a1a 0%, #0a0a0a 60%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-img-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, #1a1a1a 39px, #1a1a1a 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, #1a1a1a 39px, #1a1a1a 40px);
+    opacity: 0.4;
+  }
+
+  .hero-img-text {
+    font-family: var(--font-display);
+    font-size: 200px;
+    color: #161616;
+    line-height: 1;
+    user-select: none;
+    position: relative;
+  }
+
+  .hero-caption {
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-caption h2 {
+    font-family: var(--font-display);
+    font-size: 42px;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .hero-caption p {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--mid);
+    text-transform: uppercase;
+  }
+
+  /* ─── ARTICLES GRID ─── */
+  .articles-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 32px 48px 0;
+    border-bottom: 1px solid #1f1f1f;
+    padding-bottom: 16px;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+
+  .section-count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 0.1em;
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid #1f1f1f;
+  }
+
+  .article-card {
+    border-right: 1px solid #1f1f1f;
+    padding: 32px;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .article-card:last-child { border-right: none; }
+
+  .article-card:hover { background: #0f0f0f; }
+
+  .article-card.featured {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    padding: 0;
+    border-right: 1px solid #1f1f1f;
+  }
+
+  .article-card.featured .card-text { padding: 32px; }
+
+  .card-img {
+    background: #111;
+    aspect-ratio: 4/3;
+    margin-bottom: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .article-card.featured .card-img {
+    aspect-ratio: unset;
+    height: 100%;
+    margin-bottom: 0;
+  }
+
+  .card-img-inner {
+    width: 100%;
+    height: 100%;
+    background: #161616;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 48px;
+    color: #222;
+    transition: transform 0.4s ease;
+  }
+
+  .article-card:hover .card-img-inner { transform: scale(1.04); }
+
+  .card-category {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    letter-spacing: 0.03em;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .article-card.featured .card-title { font-size: 40px; }
+
+  .card-excerpt {
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--mid);
+    margin-bottom: 16px;
+  }
+
+  .card-meta {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: #444;
+    text-transform: uppercase;
+    display: flex;
+    gap: 16px;
+  }
+
+  /* ─── BRAND PROFILES ─── */
+  .brands-section { padding: 0; }
+
+  .brands-intro {
+    padding: 64px 48px 48px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 64px;
+    border-bottom: 1px solid #1f1f1f;
+  }
+
+  .brands-intro-title {
+    font-family: var(--font-display);
+    font-size: 72px;
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+  }
+
+  .brands-intro-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .brands-intro-text p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--mid);
+    max-width: 540px;
+  }
+
+  .brands-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .brand-card {
+    border-right: 1px solid #1f1f1f;
+    border-bottom: 1px solid #1f1f1f;
+    padding: 28px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .brand-card:nth-child(4n) { border-right: none; }
+  .brand-card:hover { background: #0f0f0f; }
+
+  .brand-logo-box {
+    width: 100%;
+    aspect-ratio: 3/2;
+    background: #141414;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 32px;
+    color: #2a2a2a;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+    border: 1px solid #1a1a1a;
+  }
+
+  .brand-card:hover .brand-logo-box { color: #444; }
+
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .brand-origin {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .brand-desc {
+    font-size: 11px;
+    line-height: 1.6;
+    color: #666;
+  }
+
+  /* ─── MUSIC ─── */
+  .music-section { padding: 0; }
+
+  .music-hero {
+    padding: 80px 48px;
+    border-bottom: 1px solid #1f1f1f;
+    position: relative;
+    overflow: hidden;
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .music-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      #0f0f0f 3px,
+      #0f0f0f 4px
+    );
+  }
+
+  .music-hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(80px, 12vw, 160px);
+    line-height: 0.88;
+    letter-spacing: 0.01em;
+    position: relative;
+    z-index: 1;
+  }
+
+  .music-hero-title span { color: var(--yellow); }
+
+  .music-hero-sub {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--mid);
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+    margin-top: 16px;
+  }
+
+  .music-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .music-feature {
+    border-right: 1px solid #1f1f1f;
+    padding: 48px;
+  }
+
+  .music-feature-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 16px;
+  }
+
+  .music-feature-title {
+    font-family: var(--font-display);
+    font-size: 52px;
+    line-height: 0.95;
+    letter-spacing: 0.03em;
+    margin-bottom: 20px;
+  }
+
+  .music-feature-text {
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--mid);
+    max-width: 500px;
+  }
+
+  .music-sidebar { padding: 0; }
+
+  .music-track {
+    border-bottom: 1px solid #1f1f1f;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .music-track:hover { background: #0f0f0f; }
+
+  .track-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: #333;
+    min-width: 20px;
+  }
+
+  .track-info { flex: 1; }
+
+  .track-name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    margin-bottom: 3px;
+  }
+
+  .track-artist {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--mid);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .track-genre {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--yellow);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ─── ARCHIVE ─── */
+  .archive-section { padding: 0; }
+
+  .archive-header {
+    padding: 64px 48px;
+    border-bottom: 1px solid #1f1f1f;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .archive-title {
+    font-family: var(--font-display);
+    font-size: 80px;
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+  }
+
+  .archive-title span {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 0.45em;
+    font-style: italic;
+    color: var(--mid);
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .issue-card {
+    border-right: 1px solid #1f1f1f;
+    border-bottom: 1px solid #1f1f1f;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .issue-card:nth-child(3n) { border-right: none; }
+
+  .issue-cover {
+    aspect-ratio: 3/4;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s ease;
+  }
+
+  .issue-card:hover .issue-cover { transform: scale(1.02); }
+
+  .issue-cover-text {
+    font-family: var(--font-display);
+    font-size: 120px;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+
+  .issue-cover.current { background: #140808; }
+  .issue-cover.current .issue-cover-text { color: #2a0e0e; }
+
+  .issue-cover-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--red);
+    color: var(--black);
+    padding: 4px 8px;
+  }
+
+  .issue-info { padding: 20px 24px; }
+
+  .issue-num {
+    font-family: var(--font-display);
+    font-size: 32px;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  .issue-theme {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--mid);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .issue-coming {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--red);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ─── ABOUT ─── */
+  .about-section { padding: 0; }
+
+  .about-manifesto {
+    padding: 80px 48px;
+    max-width: 880px;
+    border-bottom: 1px solid #1f1f1f;
+  }
+
+  .about-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .manifesto-text {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 3.5vw, 48px);
+    font-style: italic;
+    line-height: 1.25;
+    color: var(--white);
+    margin-bottom: 48px;
+  }
+
+  .manifesto-body {
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--mid);
+    columns: 2;
+    column-gap: 48px;
+  }
+
+  .manifesto-body p { margin-bottom: 20px; break-inside: avoid; }
+
+  .about-team {
+    padding: 64px 48px;
+    border-bottom: 1px solid #1f1f1f;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 32px;
+  }
+
+  .team-member {
+    border-right: 1px solid #1f1f1f;
+    padding: 24px;
+  }
+
+  .team-member:last-child { border-right: none; }
+
+  .member-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #141414;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 48px;
+    color: #222;
+  }
+
+  .member-name {
+    font-family: var(--font-display);
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  .member-role {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+
+  /* ─── SUBMIT / CONTACT ─── */
+  .submit-section { padding: 0; }
+
+  .submit-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 64px);
+  }
+
+  .submit-left {
+    padding: 80px 64px;
+    border-right: 1px solid #1f1f1f;
+  }
+
+  .submit-title {
+    font-family: var(--font-display);
+    font-size: 72px;
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+
+  .submit-sub {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-style: italic;
+    color: var(--mid);
+    margin-bottom: 40px;
+  }
+
+  .submit-info {
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--mid);
+    margin-bottom: 40px;
+    max-width: 400px;
+  }
+
+  .submit-looking {
+    margin-top: 48px;
+  }
+
+  .submit-looking h4 {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 16px;
+  }
+
+  .submit-looking ul {
+    list-style: none;
+  }
+
+  .submit-looking li {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+    padding: 8px 0;
+    border-bottom: 1px solid #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .submit-looking li::before {
+    content: '→';
+    color: var(--red);
+    font-size: 12px;
+  }
+
+  .submit-right {
+    padding: 80px 64px;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .form-group label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 8px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #2a2a2a;
+    padding: 10px 0;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+    cursor: crosshair;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-bottom-color: var(--red);
+  }
+
+  .form-group select option { background: var(--black); }
+
+  .form-group textarea {
+    resize: none;
+    height: 100px;
+    line-height: 1.65;
+  }
+
+  .form-submit {
+    margin-top: 32px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    letter-spacing: 0.12em;
+    background: transparent;
+    border: 1px solid var(--white);
+    color: var(--white);
+    padding: 14px 36px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .form-submit:hover {
+    background: var(--white);
+    color: var(--black);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid #1f1f1f;
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 0.1em;
+    color: #333;
+  }
+
+  .footer-logo span { color: var(--red); }
+
+  .footer-text {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: #333;
+    text-transform: uppercase;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--mid); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .articles-grid { grid-template-columns: 1fr; }
+    .article-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+    .brands-grid { grid-template-columns: 1fr 1fr; }
+    .music-grid { grid-template-columns: 1fr; }
+    .archive-grid { grid-template-columns: 1fr 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
+    .submit-layout { grid-template-columns: 1fr; }
+    .submit-right { display: none; }
+    .manifesto-body { columns: 1; }
+    .nav-links { display: none; }
+    .brands-intro { grid-template-columns: 1fr; gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#" onclick="showSection('editorial')">KAAA<span>N</span>D</a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showSection('editorial')">Editorial</a></li>
+    <li><a href="#" onclick="showSection('brands')">Brands</a></li>
+    <li><a href="#" onclick="showSection('music')">Music</a></li>
+    <li><a href="#" onclick="showSection('archive')">Archive</a></li>
+    <li><a href="#" onclick="showSection('about')">About</a></li>
+    <li><a href="#" onclick="showSection('submit')">Submit</a></li>
+  </ul>
+  <a href="#" class="nav-issue" onclick="showSection('archive')">Issue 00</a>
+</nav>
+
+<!-- ══════════════════════════════════ -->
+<!-- SECTION: EDITORIAL                -->
+<!-- ══════════════════════════════════ -->
+<section id="editorial" class="active">
+
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span>Fashion</span><span>·</span>
+      <span>Rave Culture</span><span>·</span>
+      <span>Homegrown Brands</span><span>·</span>
+      <span>Techno</span><span>·</span>
+      <span>Psy-Trance</span><span>·</span>
+      <span>Streetwear</span><span>·</span>
+      <span>India</span><span>·</span>
+      <span>Issue 00</span><span>·</span>
+      <span>Fashion</span><span>·</span>
+      <span>Rave Culture</span><span>·</span>
+      <span>Homegrown Brands</span><span>·</span>
+      <span>Techno</span><span>·</span>
+      <span>Psy-Trance</span><span>·</span>
+      <span>Streetwear</span><span>·</span>
+      <span>India</span><span>·</span>
+      <span>Issue 00</span><span>·</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-left">
+      <div>
+        <div class="hero-kicker">Vol. 1 / Issue 00 — India / 2026</div>
+        <h1 class="hero-title">THE<br><em>NEW</em><br>NOISE</h1>
+        <p class="hero-desc">A magazine for the generation that built its own culture. Fashion, music, identity — the underground India that doesn't wait for permission.</p>
+        <div class="hero-tags">
+          <span class="tag">GenZ India</span>
+          <span class="tag">Rave</span>
+          <span class="tag">Techno</span>
+          <span class="tag">Streetwear</span>
+          <span class="tag">Homegrown</span>
+          <span class="tag">Psy-Trance</span>
+        </div>
+      </div>
+      <div class="hero-tags" style="margin-top: 40px;">
+        <span class="tag" style="border-color: var(--red); color: var(--white); cursor: pointer;" onclick="showSection('archive')">→ Read Issue 00</span>
+        <span class="tag" style="cursor: pointer;" onclick="showSection('submit')">Submit Work</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-img-placeholder">
+        <div class="hero-img-text">K</div>
+      </div>
+      <div class="hero-caption">
+        <h2>COVER<br>STORY</h2>
+        <p>Issue 00 — The Origin</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="articles-header">
+    <span class="section-label">Latest Stories</span>
+    <span class="section-count">06 articles</span>
+  </div>
+
+  <div class="articles-grid">
+    <div class="article-card featured">
+      <div class="card-img">
+        <div class="card-img-inner">FASH</div>
+      </div>
+      <div class="card-text">
+        <div class="card-category">Fashion</div>
+        <div class="card-title">The Thrift Economy: How Indian GenZ Rewired Fashion from the Ground Up</div>
+        <div class="card-excerpt">From Sarojini Nagar hauls to Instagram drops, a generation built an entire aesthetic universe on rejection of the mainstream.</div>
+        <div class="card-meta">
+          <span>Arjun Mehta</span>
+          <span>8 min read</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="article-card">
+      <div class="card-img"><div class="card-img-inner">RAVE</div></div>
+      <div class="card-category">Rave Culture</div>
+      <div class="card-title">Floors Without Walls: India's Rave Diaspora</div>
+      <div class="card-excerpt">From Goa trance roots to underground Bombay techno — the lineage of India's dancefloor underground.</div>
+      <div class="card-meta"><span>Priya Nair</span><span>6 min read</span></div>
+    </div>
+
+    <div class="article-card">
+      <div class="card-img"><div class="card-img-inner">BRND</div></div>
+      <div class="card-category">Brands</div>
+      <div class="card-title">No Logo Required: The Homegrown Labels Winning Without Hype</div>
+      <div class="card-excerpt">Spotlight on 5 Indian labels doing it independently — no VC money, no celebrity co-signs.</div>
+      <div class="card-meta"><span>Kabir Singh</span><span>5 min read</span></div>
+    </div>
+
+    <div class="article-card">
+      <div class="card-img"><div class="card-img-inner">MUSC</div></div>
+      <div class="card-category">Music</div>
+      <div class="card-title">The Psy-Trance Revival and Why Gen Z Inherited It</div>
+      <div class="card-excerpt">Why the sound of Goa in the 90s is the sound of India's warehouses in 2026.</div>
+      <div class="card-meta"><span>Ananya Rao</span><span>7 min read</span></div>
+    </div>
+
+    <div class="article-card">
+      <div class="card-img"><div class="card-img-inner">IDNT</div></div>
+      <div class="card-category">Identity</div>
+      <div class="card-title">Dressing Against the Grain: Queer Fashion in Urban India</div>
+      <div class="card-excerpt">How queer communities are shaping the most radical edge of Indian street fashion.</div>
+      <div class="card-meta"><span>Siya Kapoor</span><span>9 min read</span></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">KAAA<span>N</span>D</div>
+    <div class="footer-text">© 2026 KAAAND — kaaand.xyz</div>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showSection('about')">About</a></li>
+      <li><a href="#" onclick="showSection('submit')">Submit</a></li>
+      <li><a href="#">Instagram</a></li>
+    </ul>
+  </footer>
+</section>
+
+<!-- ══════════════════════════════════ -->
+<!-- SECTION: BRAND PROFILES           -->
+<!-- ══════════════════════════════════ -->
+<section id="brands">
+  <div class="brands-section">
+    <div class="brands-intro">
+      <div>
+        <div class="section-label" style="margin-bottom: 16px;">Homegrown</div>
+        <div class="brands-intro-title">MADE<br>IN<br>INDIA</div>
+      </div>
+      <div class="brands-intro-text">
+        <p>These are the labels that didn't wait for a gateway. Built in bedrooms, warehouses, and late-night drop sessions — Indian homegrown fashion is the most interesting thing happening in the country right now. We profile the brands pushing the culture forward.</p>
+      </div>
+    </div>
+
+    <div class="brands-grid">
+      <div class="brand-card">
+        <div class="brand-logo-box">KAS</div>
+        <div class="brand-origin">Mumbai</div>
+        <div class="brand-name">KAASAW</div>
+        <div class="brand-desc">Deconstructed silhouettes rooted in Dalit Bahujan identity. Handwoven cotton, raw edges, no apologies.</div>
+      </div>
+      <div class="brand-card">
+        <div class="brand-logo-box">OBL</div>
+        <div class="brand-origin">Bengaluru</div>
+        <div class="brand-name">OBLIQUE</div>
+        <div class="brand-desc">Streetwear that takes from temple architecture and returns it as bombers and wide-leg cuts.</div>
+      </div>
+      <div class="brand-card">
+        <div class="brand-logo-box">MRM</div>
+        <div class="brand-origin">Delhi</div>
+        <div class="brand-name">MURMUR</div>
+        <div class="brand-desc">Unisex, unapologetic. Surplus fabric sourced from garment factories, remixed into something new.</div>
+      </div>
+      <div class="brand-card">
+        <div class="brand-logo-box">NOI</div>
+        <div class="brand-origin">Goa</div>
+        <div class="brand-name">NOIR DUST</div>
+        <div class="brand-desc">Rave-ready clubwear that works on a beach at 4am. Minimal, dark, built for movement.</div>
+      </div>
+      <div class="brand-card">
+        <div class="brand-logo-box">BHU</div>
+        <div class="brand-origin">Jaipur</div>
+        <div class="brand-name">BHUVI</div>
+        <div class="brand-desc">Traditional craft techniques — block print, resist dye — handed to a generation that wears them differently.</div>
+      </div>
+      <div class="brand-card">
+        <div class="brand-logo-box">WLT</div>
+        <div class="brand-origin">Hyderabad</div>
+        <div class="brand-name">WILT</div>
+        <div class="brand-desc">Slow fashion. Distressed textures, earth tones, designed to be worn until they fall apart naturally.</div>
+      </div>
+      <div class="brand-card">
+        <div class="brand-logo-box">NDL</div>
+        <div class="brand-origin">Chennai</div>
+        <div class="brand-name">NEEDLE</div>
+        <div class="brand-desc">Zine-culture-meets-garment. Every piece is numbered. Every season is a limited print run.</div>
+      </div>
+      <div class="brand-card">
+        <div class="brand-logo-box">FLR</div>
+        <div class="brand-origin">Kolkata</div>
+        <div class="brand-name">FLORA</div>
+        <div class="brand-desc">Post-colonial romanticism. Vintage silhouettes recut for a body that knows its own history.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">KAAA<span>N</span>D</div>
+    <div class="footer-text">© 2026 KAAAND — kaaand.xyz</div>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showSection('about')">About</a></li>
+      <li><a href="#" onclick="showSection('submit')">Submit</a></li>
+      <li><a href="#">Instagram</a></li>
+    </ul>
+  </footer>
+</section>
+
+<!-- ══════════════════════════════════ -->
+<!-- SECTION: MUSIC & RAVE CULTURE     -->
+<!-- ══════════════════════════════════ -->
+<section id="music">
+  <div class="music-section">
+    <div class="music-hero">
+      <div class="music-hero-bg"></div>
+      <div class="music-hero-title">RAVE<br><span>INDIA</span></div>
+      <div class="music-hero-sub">Techno · Psy-Trance · Ambient · Experimental · The underground</div>
+    </div>
+
+    <div class="music-grid">
+      <div class="music-feature">
+        <div class="music-feature-label">Feature — Rave Culture</div>
+        <div class="music-feature-title">FROM GOA<br>TO THE<br>WAREHOUSE</div>
+        <div class="music-feature-text">
+          <p style="margin-bottom: 16px;">India's relationship with electronic music is older and stranger than most people know. It started in the Anjuna Beach parties of the 80s, wound through the psy-trance explosion of the 90s, and arrived here — in the back rooms of Bombay warehouses, in Delhi basements, in Bengaluru rooftops at dawn.</p>
+          <p>This is a story about a sound that moved underground, survived, and came back harder. We trace the lineage. We name the names. We talk to the people who kept the fire going when nobody was watching.</p>
+        </div>
+      </div>
+
+      <div class="music-sidebar">
+        <div class="music-track" style="border-top: 1px solid #1f1f1f;">
+          <span class="track-num">01</span>
+          <div class="track-info">
+            <div class="track-name">DESERT CIRCUIT</div>
+            <div class="track-artist">Kohra</div>
+          </div>
+          <span class="track-genre">Techno</span>
+        </div>
+        <div class="music-track">
+          <span class="track-num">02</span>
+          <div class="track-info">
+            <div class="track-name">MANGALA</div>
+            <div class="track-artist">Sandunes</div>
+          </div>
+          <span class="track-genre">Ambient</span>
+        </div>
+        <div class="music-track">
+          <span class="track-num">03</span>
+          <div class="track-info">
+            <div class="track-name">FLUORESCENT</div>
+            <div class="track-artist">BLOT!</div>
+          </div>
+          <span class="track-genre">Psy-Trance</span>
+        </div>
+        <div class="music-track">
+          <span class="track-num">04</span>
+          <div class="track-info">
+            <div class="track-name">KAAL</div>
+            <div class="track-artist">Dualist Inquiry</div>
+          </div>
+          <span class="track-genre">Electronic</span>
+        </div>
+        <div class="music-track">
+          <span class="track-num">05</span>
+          <div class="track-info">
+            <div class="track-name">RED EARTH</div>
+            <div class="track-artist">Nucleya</div>
+          </div>
+          <span class="track-genre">Bass</span>
+        </div>
+        <div class="music-track">
+          <span class="track-num">06</span>
+          <div class="track-info">
+            <div class="track-name">SHUNYA</div>
+            <div class="track-artist">When Chai Met Toast</div>
+          </div>
+          <span class="track-genre">Indie</span>
+        </div>
+        <div class="music-track">
+          <span class="track-num">07</span>
+          <div class="track-info">
+            <div class="track-name">JUNGLE RAJA</div>
+            <div class="track-artist">Ritviz</div>
+          </div>
+          <span class="track-genre">Electronic</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">KAAA<span>N</span>D</div>
+    <div class="footer-text">© 2026 KAAAND — kaaand.xyz</div>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showSection('about')">About</a></li>
+      <li><a href="#" onclick="showSection('submit')">Submit</a></li>
+      <li><a href="#">Instagram</a></li>
+    </ul>
+  </footer>
+</section>
+
+<!-- ══════════════════════════════════ -->
+<!-- SECTION: ISSUE ARCHIVE            -->
+<!-- ══════════════════════════════════ -->
+<section id="archive">
+  <div class="archive-section">
+    <div class="archive-header">
+      <div class="archive-title">
+        <span>Every</span>
+        ISSUE
+      </div>
+      <div class="footer-text">1 issue · More coming</div>
+    </div>
+
+    <div class="archive-grid">
+      <div class="issue-card">
+        <div class="issue-cover current">
+          <div class="issue-cover-text">00</div>
+          <div class="issue-cover-badge">Out Now</div>
+        </div>
+        <div class="issue-info">
+          <div class="issue-num">ISSUE 00</div>
+          <div class="issue-theme">The Origin Issue — 2026</div>
+          <div class="issue-coming">Available Now</div>
+        </div>
+      </div>
+      <div class="issue-card">
+        <div class="issue-cover">
+          <div class="issue-cover-text">01</div>
+        </div>
+        <div class="issue-info">
+          <div class="issue-num">ISSUE 01</div>
+          <div class="issue-theme">TBA</div>
+          <div class="issue-coming">Coming Soon</div>
+        </div>
+      </div>
+      <div class="issue-card">
+        <div class="issue-cover">
+          <div class="issue-cover-text">02</div>
+        </div>
+        <div class="issue-info">
+          <div class="issue-num">ISSUE 02</div>
+          <div class="issue-theme">TBA</div>
+          <div class="issue-coming">Coming Soon</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">KAAA<span>N</span>D</div>
+    <div class="footer-text">© 2026 KAAAND — kaaand.xyz</div>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showSection('about')">About</a></li>
+      <li><a href="#" onclick="showSection('submit')">Submit</a></li>
+      <li><a href="#">Instagram</a></li>
+    </ul>
+  </footer>
+</section>
+
+<!-- ══════════════════════════════════ -->
+<!-- SECTION: ABOUT / MANIFESTO        -->
+<!-- ══════════════════════════════════ -->
+<section id="about">
+  <div class="about-section">
+    <div class="about-manifesto">
+      <div class="about-label">Manifesto</div>
+      <div class="manifesto-text">
+        "We didn't ask for a seat at the table. We built our own floor."
+      </div>
+      <div class="manifesto-body">
+        <p>KAAAND exists because Indian GenZ culture is the most interesting thing happening right now, and it was never getting the magazine it deserved.</p>
+        <p>This isn't a nostalgia project. This isn't a trend report. This is a document of what's actually happening — in the dressing rooms, on the floors, in the studios, in the streets.</p>
+        <p>We cover fashion because fashion here is political. We cover music because the rave scene is a resistance culture. We profile brands because the homegrown movement is an economic revolution happening in plain sight.</p>
+        <p>KAAAND is a zine in spirit, a magazine in practice. We're based in India and obsessed with what India is becoming — raw, loud, contradictory, and absolutely unignorable.</p>
+      </div>
+    </div>
+
+    <div class="about-team">
+      <div class="section-label">The Team</div>
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="member-img">EIC</div>
+          <div class="member-name">YOUR NAME</div>
+          <div class="member-role">Editor in Chief</div>
+        </div>
+        <div class="team-member">
+          <div class="member-img">AD</div>
+          <div class="member-name">Art Director</div>
+          <div class="member-role">Visual Design</div>
+        </div>
+        <div class="team-member">
+          <div class="member-img">PHOTO</div>
+          <div class="member-name">Photographer</div>
+          <div class="member-role">Photography</div>
+        </div>
+        <div class="team-member">
+          <div class="member-img">WRT</div>
+          <div class="member-name">Writers</div>
+          <div class="member-role">Editorial</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">KAAA<span>N</span>D</div>
+    <div class="footer-text">© 2026 KAAAND — kaaand.xyz</div>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showSection('about')">About</a></li>
+      <li><a href="#" onclick="showSection('submit')">Submit</a></li>
+      <li><a href="#">Instagram</a></li>
+    </ul>
+  </footer>
+</section>
+
+<!-- ══════════════════════════════════ -->
+<!-- SECTION: SUBMIT / CONTACT         -->
+<!-- ══════════════════════════════════ -->
+<section id="submit">
+  <div class="submit-section">
+    <div class="submit-layout">
+      <div class="submit-left">
+        <div class="about-label">Open Call</div>
+        <div class="submit-title">SUBMIT<br>YOUR<br>WORK</div>
+        <div class="submit-sub">Issue 01 is open for submissions</div>
+        <div class="submit-info">
+          We're always looking for writers, photographers, stylists, and artists who are embedded in Indian underground culture. If you have a story, a shoot, or a perspective — send it our way.
+        </div>
+
+        <div class="submit-looking">
+          <h4>We're looking for</h4>
+          <ul>
+            <li>Fashion editorials &amp; photography</li>
+            <li>Cultural essays &amp; criticism</li>
+            <li>Brand profiles &amp; interviews</li>
+            <li>Music &amp; rave scene reporting</li>
+            <li>Illustration &amp; graphic work</li>
+            <li>Poetry &amp; experimental writing</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="submit-right">
+        <div class="section-label" style="margin-bottom: 32px;">Get in touch</div>
+        <form onsubmit="return false;">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" placeholder="First Last">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label>Submission Type</label>
+            <select>
+              <option value="">Select one</option>
+              <option>Fashion Editorial</option>
+              <option>Written Essay</option>
+              <option>Photography</option>
+              <option>Brand Profile</option>
+              <option>Music / Rave Culture</option>
+              <option>Illustration</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tell us about your submission</label>
+            <textarea placeholder="Describe your idea, include any relevant links..."></textarea>
+          </div>
+          <button class="form-submit" type="submit">Send It →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">KAAA<span>N</span>D</div>
+    <div class="footer-text">© 2026 KAAAND — kaaand.xyz</div>
+    <ul class="footer-links">
+      <li><a href="#" onclick="showSection('about')">About</a></li>
+      <li><a href="#" onclick="showSection('submit')">Submit</a></li>
+      <li><a href="#">Instagram</a></li>
+    </ul>
+  </footer>
+</section>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.style.color = '';
+    });
+    const active = document.querySelector(`.nav-links a[onclick*="${id}"]`);
+    if (active) active.style.color = 'var(--white)';
+  }
+
+  // Prevent all href default nav
+  document.querySelectorAll('a[href="#"]').forEach(a => {
+    a.addEventListener('click', e => e.preventDefault());
+  });
+</script>
+</body>
+</html>
