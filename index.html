@@ -1,275 +1,901 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAAAND | Exhibit-1</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --brand-red: #D00000;
-            --brand-dark: #8B0000;
-            --white: #FFFFFF;
-            --black: #000000;
-            --grid-color: rgba(0, 0, 0, 0.12);
-            --ease: cubic-bezier(0.16, 1, 0.3, 1);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAAAND</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,400&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#050505;
+  --white:#f0ece4;
+  --red:#c8391a;
+  --yellow:#d4b84a;
+  --dim:#1a1a1a;
+  --mid:#555550;
+  --faint:#222220;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{cursor:none;font-family:'IBM Plex Mono',monospace;}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: transparent;
-        }
+/* ── CUSTOM CURSOR ── */
+#cursor{
+  position:fixed;z-index:9999;pointer-events:none;
+  width:8px;height:8px;background:var(--red);border-radius:50%;
+  transform:translate(-50%,-50%);
+  transition:width .15s,height .15s,opacity .15s;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  position:fixed;z-index:9998;pointer-events:none;
+  width:32px;height:32px;
+  border:1px solid rgba(200,57,26,.35);border-radius:50%;
+  transform:translate(-50%,-50%);
+  transition:transform .08s,width .2s,height .2s;
+}
+body:has(a:hover) #cursor,body:has(.node:hover) #cursor{width:16px;height:16px;}
+body:has(a:hover) #cursor-ring,body:has(.node:hover) #cursor-ring{width:56px;height:56px;}
 
-        body {
-            background-color: var(--brand-red);
-            font-family: 'Inter', sans-serif;
-            color: var(--white);
-            height: 100vh;
-            height: 100dvh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-            
-            /* Combined blurred radial gradient and static grid */
-            background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
-                radial-gradient(circle at center, var(--brand-red) 0%, var(--brand-dark) 100%);
-            background-size: 50px 50px, 50px 50px, 100% 100%;
-            background-position: center center;
-        }
+/* ── CANVAS ── */
+#world{
+  position:fixed;inset:0;
+  will-change:transform;
+  transition:transform .05s linear;
+}
 
-        /* Subtle grain texture for an editorial finish */
-        body::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
-            opacity: 0.1;
-            pointer-events: none;
-            z-index: 1;
-        }
+/* ── GRAIN OVERLAY ── */
+#grain{
+  position:fixed;inset:0;z-index:500;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
 
-        .container {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            width: 100%;
-            padding: 0 1.5rem;
-            max-width: 900px;
-        }
+/* ── VIGNETTE ── */
+#vignette{
+  position:fixed;inset:0;z-index:501;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.85) 100%);
+}
 
-        .issue-label {
-            display: inline-block;
-            font-size: 0.6rem;
-            font-weight: 800;
-            letter-spacing: 0.5em;
-            text-transform: uppercase;
-            padding: 0.6rem 1.4rem;
-            border: 1px solid var(--white);
-            margin-bottom: 2.5rem;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: revealUp 0.8s var(--ease) 0.2s forwards;
-            background: rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
-        }
+/* ── SCANLINES ── */
+#scanlines{
+  position:fixed;inset:0;z-index:502;pointer-events:none;opacity:.03;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.08) 2px,rgba(255,255,255,.08) 4px);
+}
 
-        .logo {
-            font-size: clamp(3.2rem, 18vw, 11rem);
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            text-transform: uppercase;
-            color: var(--white);
-            line-height: 0.85;
-            margin-bottom: 1.5rem;
-            user-select: none;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: revealUp 1s var(--ease) 0.4s forwards;
-        }
+/* ── GRID FLOOR ── */
+#grid-floor{
+  position:absolute;
+  width:4000px;height:4000px;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%) perspective(600px) rotateX(65deg);
+  transform-origin:center bottom;
+  background-image:
+    linear-gradient(rgba(200,57,26,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,57,26,.06) 1px,transparent 1px);
+  background-size:80px 80px;
+  pointer-events:none;
+  opacity:.5;
+}
 
-        .tagline {
-            font-size: clamp(0.7rem, 2vw, 1rem);
-            font-weight: 600;
-            letter-spacing: 0.5em;
-            text-transform: uppercase;
-            margin-bottom: 4rem;
-            opacity: 0;
-            animation: fadeIn 1s var(--ease) 0.8s forwards;
-        }
+/* ── NODES (floating content fragments) ── */
+.node{
+  position:absolute;
+  cursor:pointer;
+  transform:translate(-50%,-50%);
+  transition:opacity .3s;
+}
+.node:hover{z-index:100;}
 
-        .form-container {
-            max-width: 380px;
-            margin: 0 auto;
-            width: 100%;
-            opacity: 0;
-            animation: fadeIn 1.2s var(--ease) 1s forwards;
-        }
+/* LOGO NODE */
+#node-logo{
+  left:50%;top:50%;
+  z-index:10;
+  text-align:center;
+  pointer-events:none;
+}
+#node-logo .logo-main{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(80px,10vw,140px);
+  letter-spacing:.18em;
+  color:var(--white);
+  line-height:1;
+  text-shadow:0 0 60px rgba(200,57,26,.3);
+  display:block;
+  animation:pulse-logo 4s ease-in-out infinite;
+}
+#node-logo .logo-main span{color:var(--red);}
+#node-logo .logo-sub{
+  font-size:10px;letter-spacing:.35em;color:var(--mid);
+  text-transform:uppercase;display:block;margin-top:6px;
+}
+@keyframes pulse-logo{
+  0%,100%{text-shadow:0 0 60px rgba(200,57,26,.3);}
+  50%{text-shadow:0 0 100px rgba(200,57,26,.6),0 0 200px rgba(200,57,26,.2);}
+}
 
-        .signup-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
+/* ARTICLE NODE */
+.article-node{
+  width:260px;
+}
+.article-node .node-tag{
+  font-size:8px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--red);margin-bottom:8px;
+}
+.article-node .node-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;letter-spacing:.06em;line-height:1.0;
+  color:var(--white);margin-bottom:10px;
+}
+.article-node .node-line{
+  width:0;height:1px;background:var(--red);
+  transition:width .4s ease;margin-bottom:10px;
+}
+.article-node:hover .node-line{width:100%;}
+.article-node .node-excerpt{
+  font-size:10px;line-height:1.6;color:var(--mid);
+  max-height:0;overflow:hidden;
+  transition:max-height .4s ease,opacity .4s;
+  opacity:0;
+}
+.article-node:hover .node-excerpt{max-height:80px;opacity:1;}
+.article-node .node-meta{
+  font-size:8px;letter-spacing:.18em;color:#333;
+  text-transform:uppercase;margin-top:8px;
+}
 
-        input[type="email"] {
-            width: 100%;
-            padding: 1.25rem 0;
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 0;
-            color: var(--white);
-            font-size: 16px; 
-            text-align: center;
-            outline: none;
-            transition: all 0.3s var(--ease);
-            letter-spacing: 0.05em;
-        }
+/* BRAND NODE */
+.brand-node{
+  width:180px;text-align:center;
+}
+.brand-node .brand-abbr{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:56px;letter-spacing:.1em;
+  color:var(--faint);
+  transition:color .3s,text-shadow .3s;
+  line-height:1;
+}
+.brand-node:hover .brand-abbr{
+  color:var(--white);
+  text-shadow:0 0 40px rgba(212,184,74,.4);
+}
+.brand-node .brand-name-sm{
+  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--mid);display:block;margin-top:4px;
+  transition:color .3s;
+}
+.brand-node:hover .brand-name-sm{color:var(--yellow);}
+.brand-node .brand-city{font-size:8px;color:#2a2a2a;letter-spacing:.15em;text-transform:uppercase;transition:color .3s;}
+.brand-node:hover .brand-city{color:#444;}
 
-        input[type="email"]:focus {
-            border-bottom-color: var(--white);
-            background: rgba(255, 255, 255, 0.05);
-        }
+/* MUSIC NODE */
+.music-node{
+  width:200px;
+}
+.music-node .music-num{
+  font-size:60px;letter-spacing:-.02em;color:var(--faint);
+  font-family:'Bebas Neue',sans-serif;line-height:1;
+  transition:color .3s;
+}
+.music-node:hover .music-num{color:var(--yellow);}
+.music-node .music-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;letter-spacing:.08em;color:var(--white);
+  margin-top:-4px;line-height:1.0;
+}
+.music-node .music-artist{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-top:5px;}
+.music-node .music-genre{font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--yellow);margin-top:2px;}
+.music-node .music-bar{
+  margin-top:8px;height:1px;width:0;background:var(--yellow);
+  transition:width .5s ease;
+}
+.music-node:hover .music-bar{width:100%;}
 
-        input[type="email"]::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-        }
+/* MANIFESTO NODE */
+.manifesto-node{
+  width:320px;
+  border-left:2px solid var(--red);
+  padding-left:20px;
+}
+.manifesto-node .m-text{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-style:italic;line-height:1.35;
+  color:var(--white);
+}
+.manifesto-node .m-attr{
+  font-size:8px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--mid);margin-top:12px;
+}
 
-        button {
-            width: 100%;
-            padding: 1.25rem;
-            background: var(--white);
-            color: var(--black);
-            border: none;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.25em;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s var(--ease);
-        }
+/* ISSUE NODE */
+.issue-node{
+  width:140px;
+  border:1px solid var(--faint);
+  padding:20px;
+  text-align:center;
+  transition:border-color .3s,box-shadow .3s;
+}
+.issue-node:hover{
+  border-color:var(--red);
+  box-shadow:0 0 40px rgba(200,57,26,.15);
+}
+.issue-node .issue-num-big{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:64px;color:var(--faint);line-height:1;
+  transition:color .3s;
+}
+.issue-node:hover .issue-num-big{color:var(--white);}
+.issue-node .issue-label{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--mid);}
+.issue-node .issue-badge{
+  display:inline-block;font-size:7px;letter-spacing:.18em;text-transform:uppercase;
+  background:var(--red);color:var(--bg);padding:3px 7px;margin-top:8px;
+}
 
-        button:hover {
-            background: var(--black);
-            color: var(--white);
-            transform: translateY(-2px);
-        }
+/* SUBMIT NODE */
+.submit-node{
+  text-align:center;
+}
+.submit-node .s-label{font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--mid);margin-bottom:12px;}
+.submit-node .s-cta{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:32px;letter-spacing:.12em;
+  color:var(--white);
+  border:1px solid #2a2a2a;
+  padding:12px 28px;
+  display:inline-block;
+  transition:all .3s;
+}
+.submit-node:hover .s-cta{
+  border-color:var(--red);
+  color:var(--red);
+  text-shadow:0 0 20px rgba(200,57,26,.5);
+}
 
-        .success-message {
-            display: none;
-            font-weight: 800;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            margin-top: 1rem;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(5px);
-        }
+/* SCATTER TEXT (ambient labels) */
+.ambient-text{
+  position:absolute;
+  font-size:8px;letter-spacing:.25em;text-transform:uppercase;
+  color:#1e1e1c;pointer-events:none;white-space:nowrap;
+  transform:translate(-50%,-50%);
+}
 
-        .footer {
-            position: absolute;
-            bottom: 2.5rem;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 4rem;
-            font-size: 0.6rem;
-            font-weight: 700;
-            letter-spacing: 0.3em;
-            z-index: 10;
-            opacity: 0.6;
-            text-transform: uppercase;
-        }
+/* ── OVERLAY PANEL ── */
+#overlay{
+  position:fixed;inset:0;z-index:600;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;opacity:0;
+  transition:opacity .3s;
+}
+#overlay.open{opacity:1;pointer-events:all;}
+#overlay-bg{
+  position:absolute;inset:0;background:rgba(0,0,0,.92);
+  backdrop-filter:blur(4px);
+}
+#overlay-panel{
+  position:relative;z-index:1;
+  width:min(720px,92vw);
+  max-height:85vh;
+  overflow-y:auto;
+  background:var(--bg);
+  border:1px solid #1f1f1f;
+  padding:0;
+  transform:translateY(20px);
+  transition:transform .3s;
+}
+#overlay.open #overlay-panel{transform:translateY(0);}
+#overlay-panel::-webkit-scrollbar{width:3px;}
+#overlay-panel::-webkit-scrollbar-track{background:transparent;}
+#overlay-panel::-webkit-scrollbar-thumb{background:#2a2a2a;}
+.overlay-close{
+  position:sticky;top:0;z-index:2;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 28px;
+  background:var(--bg);border-bottom:1px solid #1a1a1a;
+}
+.overlay-close-tag{font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--red);}
+.overlay-close-btn{
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--mid);background:transparent;border:none;cursor:pointer;
+  transition:color .2s;
+}
+.overlay-close-btn:hover{color:var(--white);}
+.overlay-body{padding:32px 40px 48px;}
+.overlay-body h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,5vw,64px);
+  letter-spacing:.04em;line-height:.95;
+  margin-bottom:20px;
+}
+.overlay-body .o-lead{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-style:italic;line-height:1.5;
+  color:var(--white);margin-bottom:28px;
+  padding-bottom:28px;border-bottom:1px solid #1a1a1a;
+}
+.overlay-body p{font-size:14px;line-height:1.85;color:#888882;margin-bottom:20px;}
+.overlay-body h3{
+  font-family:'Bebas Neue',sans-serif;font-size:26px;
+  letter-spacing:.05em;color:var(--white);margin:28px 0 12px;
+}
+.overlay-body blockquote{
+  border-left:2px solid var(--red);padding:10px 20px;
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:17px;color:var(--white);margin:24px 0;
+}
+.overlay-meta{display:flex;gap:20px;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#333;margin-bottom:24px;}
+.overlay-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:24px;}
+.overlay-tag{font-size:7px;letter-spacing:.18em;text-transform:uppercase;border:1px solid #1f1f1f;padding:4px 8px;color:#444;}
 
-        /* Animations */
-        @keyframes revealUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
+/* BRAND OVERLAY */
+.brand-ov-header{margin-bottom:24px;}
+.brand-ov-city{font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--red);margin-bottom:8px;}
+.brand-ov-meta{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:24px;border-top:1px solid #1a1a1a;}
+.bom-item{padding:14px 0;border-bottom:1px solid #1a1a1a;}
+.bom-label{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:4px;}
+.bom-val{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;}
 
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
+/* MUSIC OVERLAY */
+.music-ov-num{
+  font-family:'Bebas Neue',sans-serif;font-size:100px;
+  color:#1a1a1a;line-height:1;margin-bottom:-10px;
+}
+.music-ov-player{margin-top:20px;border:1px solid #1a1a1a;}
+.music-ov-player iframe{width:100%;display:block;border:none;}
 
-        /* Mobile Optimization */
-        @media (max-width: 768px) {
-            body { background-size: 40px 40px, 40px 40px, 100% 100%; }
-            .logo { letter-spacing: -0.02em; margin-bottom: 1rem; }
-            .tagline { letter-spacing: 0.3em; margin-bottom: 3rem; }
-            .footer { 
-                padding: 0 2rem;
-                flex-direction: column; 
-                align-items: center; 
-                gap: 0.8rem; 
-                bottom: 2rem;
-                text-align: center;
-            }
-            .dot { display: none; }
-        }
+/* SUBMIT FORM */
+.s-form-group{margin-bottom:20px;}
+.s-form-group label{display:block;font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--mid);margin-bottom:7px;}
+.s-form-group input,.s-form-group select,.s-form-group textarea{
+  width:100%;background:transparent;border:none;border-bottom:1px solid #1f1f1f;
+  padding:8px 0;color:var(--white);font-family:'IBM Plex Mono',monospace;
+  font-size:13px;outline:none;transition:border-color .2s;cursor:text;
+}
+.s-form-group input:focus,.s-form-group select:focus,.s-form-group textarea:focus{border-bottom-color:var(--red);}
+.s-form-group select option{background:var(--bg);}
+.s-form-group textarea{resize:none;height:80px;line-height:1.6;}
+.s-submit{
+  font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.15em;
+  background:transparent;border:1px solid var(--white);color:var(--white);
+  padding:12px 32px;cursor:pointer;transition:all .2s;margin-top:8px;
+}
+.s-submit:hover{background:var(--white);color:var(--bg);}
+.s-success{display:none;padding:16px;border:1px solid var(--red);margin-top:16px;}
+.s-success strong{display:block;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.1em;margin-bottom:4px;}
+.s-success p{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--mid);margin:0;}
 
-        @media (max-height: 750px) {
-            .logo { margin-bottom: 1rem; }
-            .tagline { margin-bottom: 2rem; }
-            .footer { bottom: 1.5rem; }
-        }
-    </style>
+/* ── INTRO FLASH ── */
+#intro{
+  position:fixed;inset:0;z-index:900;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--bg);
+  cursor:pointer;
+}
+.intro-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(100px,18vw,220px);
+  letter-spacing:.15em;
+  color:var(--bg);
+  -webkit-text-stroke:1px rgba(240,236,228,.15);
+  text-shadow:none;
+  animation:intro-pulse 1.5s ease-in-out infinite;
+  line-height:1;
+}
+.intro-logo span{-webkit-text-stroke-color:rgba(200,57,26,.4);}
+@keyframes intro-pulse{
+  0%,100%{-webkit-text-stroke-color:rgba(240,236,228,.15);}
+  50%{-webkit-text-stroke-color:rgba(240,236,228,.5);}
+}
+.intro-sub{
+  font-size:9px;letter-spacing:.4em;text-transform:uppercase;
+  color:var(--mid);margin-top:16px;
+  animation:blink 1.4s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+.intro-hint{position:absolute;bottom:40px;font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:#222;}
+
+/* ── HINT TEXT (bottom) ── */
+#hint{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:#222;
+  pointer-events:none;z-index:503;
+  animation:hint-fade 6s 3s forwards;
+}
+@keyframes hint-fade{0%{opacity:1}80%{opacity:1}100%{opacity:0}}
+
+/* ── CONNECTION LINES (SVG) ── */
+#connections{
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;opacity:.12;
+}
+
+/* GLOW DOTS */
+.glow-dot{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  animation:glow-pulse var(--dur,3s) ease-in-out infinite var(--delay,0s);
+}
+@keyframes glow-pulse{
+  0%,100%{opacity:.15;transform:translate(-50%,-50%) scale(1);}
+  50%{opacity:.4;transform:translate(-50%,-50%) scale(1.3);}
+}
+
+/* ── COORD DISPLAY ── */
+#coords{
+  position:fixed;bottom:24px;right:32px;
+  font-size:8px;letter-spacing:.18em;color:#1e1e1e;
+  pointer-events:none;z-index:503;
+}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .article-node{width:200px;}
+  .manifesto-node{width:240px;}
+  #overlay-panel{width:96vw;}
+  .overlay-body{padding:24px 20px 36px;}
+}
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <div class="issue-label">Exhibit-1 Coming Soon</div>
-            <h1 class="logo">KAAAND</h1>
-            <p class="tagline">Culture &bull; Chaos &bull; Content</p>
-        </header>
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
-        <div class="form-container">
-            <form class="signup-form" id="notifyForm">
-                <input type="email" id="email" placeholder="YOUR EMAIL ADDRESS" required autocomplete="email">
-                <button type="submit" id="submitBtn">Notify Me</button>
-            </form>
-            <div id="successMsg" class="success-message">Added to the list.</div>
-        </div>
+<!-- INTRO SCREEN -->
+<div id="intro" onclick="enterSite()">
+  <div class="intro-logo">KAAA<span>N</span>D</div>
+  <div class="intro-sub">Issue 00 — Enter</div>
+  <div class="intro-hint">Click anywhere to enter</div>
+</div>
+
+<!-- OVERLAY PANEL -->
+<div id="overlay">
+  <div id="overlay-bg" onclick="closeOverlay()"></div>
+  <div id="overlay-panel">
+    <div class="overlay-close">
+      <span class="overlay-close-tag" id="overlay-tag">Article</span>
+      <button class="overlay-close-btn" onclick="closeOverlay()">✕ Close</button>
     </div>
+    <div class="overlay-body" id="overlay-body"></div>
+  </div>
+</div>
 
-    <footer class="footer">
-        <span>Est. 2026</span>
-        <span class="dot">&bull;</span>
-        <span>Unfiltered Editorial</span>
-        <span class="dot">&bull;</span>
-        <span>Worldwide</span>
-    </footer>
+<!-- AMBIENT EFFECTS -->
+<div id="grain"></div>
+<div id="vignette"></div>
+<div id="scanlines"></div>
 
-    <script>
-        document.getElementById('notifyForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const form = document.getElementById('notifyForm');
-            const success = document.getElementById('successMsg');
-            
-            btn.innerHTML = "Processing...";
-            btn.disabled = true;
+<!-- HINT -->
+<div id="hint">Move to explore · Click to read</div>
+<div id="coords">00.000 / 00.000</div>
 
-            setTimeout(() => {
-                form.style.display = 'none';
-                success.style.display = 'block';
-                success.style.opacity = '1';
-            }, 800);
-        });
-    </script>
+<!-- WORLD -->
+<div id="world">
+  <div id="grid-floor"></div>
+
+  <!-- SVG CONNECTIONS -->
+  <svg id="connections" xmlns="http://www.w3.org/2000/svg"></svg>
+
+  <!-- LOGO -->
+  <div class="node" id="node-logo">
+    <span class="logo-main">KAAA<span>N</span>D</span>
+    <span class="logo-sub">Issue 00 · India · 2026</span>
+  </div>
+
+  <!-- MANIFESTO -->
+  <div class="node manifesto-node" id="n-manifesto" onclick="openManifesto()">
+    <div class="m-text">"We didn't ask for a seat at the table.<br>We built our own floor."</div>
+    <div class="m-attr">— KAAAND Manifesto</div>
+  </div>
+
+  <!-- ISSUE NODE -->
+  <div class="node issue-node" id="n-issue" onclick="openIssue()">
+    <div class="issue-num-big">00</div>
+    <div class="issue-label">Issue Zero</div>
+    <div class="issue-badge">Out Now</div>
+  </div>
+
+  <!-- ARTICLE NODES -->
+  <div class="node article-node" id="n-art-1" onclick="openArticle('thrift')">
+    <div class="node-tag">Fashion</div>
+    <div class="node-title">THE THRIFT ECONOMY</div>
+    <div class="node-line"></div>
+    <div class="node-excerpt">How Indian GenZ rewired fashion from the ground up. Sarojini Nagar to Instagram — a generation's aesthetic universe.</div>
+    <div class="node-meta">Arjun Mehta · 8 min</div>
+  </div>
+
+  <div class="node article-node" id="n-art-2" onclick="openArticle('floors')">
+    <div class="node-tag">Rave Culture</div>
+    <div class="node-title">FLOORS WITHOUT WALLS</div>
+    <div class="node-line"></div>
+    <div class="node-excerpt">From Goa trance roots to underground Bombay techno — the lineage of India's dancefloor underground.</div>
+    <div class="node-meta">Priya Nair · 6 min</div>
+  </div>
+
+  <div class="node article-node" id="n-art-3" onclick="openArticle('queer')">
+    <div class="node-tag">Identity</div>
+    <div class="node-title">DRESSING AGAINST THE GRAIN</div>
+    <div class="node-line"></div>
+    <div class="node-excerpt">Queer communities shaping the most radical edge of Indian street fashion — in full view.</div>
+    <div class="node-meta">Siya Kapoor · 9 min</div>
+  </div>
+
+  <div class="node article-node" id="n-art-4" onclick="openArticle('psy')">
+    <div class="node-tag">Music</div>
+    <div class="node-title">THE PSY-TRANCE REVIVAL</div>
+    <div class="node-line"></div>
+    <div class="node-excerpt">Why the sound of Goa in the 90s is the sound of India's warehouses in 2026.</div>
+    <div class="node-meta">Ananya Rao · 7 min</div>
+  </div>
+
+  <!-- BRAND NODES -->
+  <div class="node brand-node" id="n-b-1" onclick="openBrand('kaasaw')">
+    <div class="brand-abbr">KAS</div>
+    <span class="brand-name-sm">KAASAW</span>
+    <div class="brand-city">Mumbai</div>
+  </div>
+  <div class="node brand-node" id="n-b-2" onclick="openBrand('oblique')">
+    <div class="brand-abbr">OBL</div>
+    <span class="brand-name-sm">OBLIQUE</span>
+    <div class="brand-city">Bengaluru</div>
+  </div>
+  <div class="node brand-node" id="n-b-3" onclick="openBrand('murmur')">
+    <div class="brand-abbr">MRM</div>
+    <span class="brand-name-sm">MURMUR</span>
+    <div class="brand-city">Delhi</div>
+  </div>
+  <div class="node brand-node" id="n-b-4" onclick="openBrand('noir')">
+    <div class="brand-abbr">NOI</div>
+    <span class="brand-name-sm">NOIR DUST</span>
+    <div class="brand-city">Goa</div>
+  </div>
+  <div class="node brand-node" id="n-b-5" onclick="openBrand('needle')">
+    <div class="brand-abbr">NDL</div>
+    <span class="brand-name-sm">NEEDLE</span>
+    <div class="brand-city">Chennai</div>
+  </div>
+
+  <!-- MUSIC NODES -->
+  <div class="node music-node" id="n-m-1" onclick="openMusic('kohra')">
+    <div class="music-num">01</div>
+    <div class="music-title">DESERT CIRCUIT</div>
+    <div class="music-artist">Kohra</div>
+    <div class="music-genre">Techno</div>
+    <div class="music-bar"></div>
+  </div>
+  <div class="node music-node" id="n-m-2" onclick="openMusic('blot')">
+    <div class="music-num">02</div>
+    <div class="music-title">FLUORESCENT</div>
+    <div class="music-artist">BLOT!</div>
+    <div class="music-genre">Psy-Trance</div>
+    <div class="music-bar"></div>
+  </div>
+  <div class="node music-node" id="n-m-3" onclick="openMusic('nucleya')">
+    <div class="music-num">03</div>
+    <div class="music-title">RED EARTH</div>
+    <div class="music-artist">Nucleya</div>
+    <div class="music-genre">Bass</div>
+    <div class="music-bar"></div>
+  </div>
+
+  <!-- SUBMIT NODE -->
+  <div class="node submit-node" id="n-submit" onclick="openSubmit()">
+    <div class="s-label">Open Call — Issue 01</div>
+    <div class="s-cta">SUBMIT WORK</div>
+  </div>
+
+  <!-- AMBIENT SCATTER TEXT -->
+  <div class="ambient-text" style="left:12%;top:18%">FASHION · RAVE · CULTURE</div>
+  <div class="ambient-text" style="left:78%;top:22%">HOMEGROWN BRANDS</div>
+  <div class="ambient-text" style="left:20%;top:82%">TECHNO · PSY-TRANCE</div>
+  <div class="ambient-text" style="left:65%;top:78%">INDIA · 2026</div>
+  <div class="ambient-text" style="left:8%;top:50%">UNDERGROUND</div>
+  <div class="ambient-text" style="left:85%;top:50%">ISSUE ZERO</div>
+  <div class="ambient-text" style="left:48%;top:88%">THE NEW NOISE</div>
+  <div class="ambient-text" style="left:50%;top:12%">KAAAND · XYZ</div>
+
+  <!-- GLOW DOTS -->
+  <div class="glow-dot" style="left:50%;top:50%;width:400px;height:400px;background:radial-gradient(circle,rgba(200,57,26,.08) 0%,transparent 70%);--dur:4s;--delay:0s;"></div>
+  <div class="glow-dot" style="left:28%;top:35%;width:200px;height:200px;background:radial-gradient(circle,rgba(212,184,74,.06) 0%,transparent 70%);--dur:5s;--delay:1s;"></div>
+  <div class="glow-dot" style="left:72%;top:65%;width:180px;height:180px;background:radial-gradient(circle,rgba(200,57,26,.05) 0%,transparent 70%);--dur:6s;--delay:2s;"></div>
+
+</div><!-- /world -->
+
+<script>
+// ── NODE POSITIONS (% of viewport) ──────────────────────
+const positions = {
+  'node-logo':   {x:50,  y:50},
+  'n-manifesto': {x:22,  y:32},
+  'n-issue':     {x:78,  y:30},
+  'n-art-1':     {x:18,  y:58},
+  'n-art-2':     {x:38,  y:74},
+  'n-art-3':     {x:62,  y:72},
+  'n-art-4':     {x:82,  y:58},
+  'n-b-1':       {x:14,  y:40},
+  'n-b-2':       {x:30,  y:22},
+  'n-b-3':       {x:50,  y:18},
+  'n-b-4':       {x:70,  y:22},
+  'n-b-5':       {x:86,  y:40},
+  'n-m-1':       {x:24,  y:78},
+  'n-m-2':       {x:50,  y:84},
+  'n-m-3':       {x:76,  y:78},
+  'n-submit':    {x:50,  y:64},
+};
+
+// Connection pairs
+const connections = [
+  ['node-logo','n-manifesto'],
+  ['node-logo','n-issue'],
+  ['node-logo','n-submit'],
+  ['node-logo','n-art-1'],
+  ['node-logo','n-art-4'],
+  ['n-art-2','n-m-1'],
+  ['n-art-4','n-m-2'],
+  ['n-b-3','n-art-1'],
+  ['n-issue','n-b-2'],
+  ['n-issue','n-b-4'],
+];
+
+function placeNodes() {
+  const W = window.innerWidth, H = window.innerHeight;
+  Object.entries(positions).forEach(([id, pos]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.left = (pos.x / 100 * W) + 'px';
+    el.style.top  = (pos.y / 100 * H) + 'px';
+  });
+}
+
+function drawConnections() {
+  const svg = document.getElementById('connections');
+  svg.innerHTML = '';
+  const W = window.innerWidth, H = window.innerHeight;
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  connections.forEach(([a, b]) => {
+    const pa = positions[a], pb = positions[b];
+    if (!pa || !pb) return;
+    const x1 = pa.x/100*W, y1 = pa.y/100*H;
+    const x2 = pb.x/100*W, y2 = pb.y/100*H;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','#c8391a'); line.setAttribute('stroke-width','0.5');
+    svg.appendChild(line);
+  });
+}
+
+// ── PARALLAX ────────────────────────────────────────
+let mx=0,my=0,cx=0,cy=0;
+const STRENGTH = 18;
+
+document.addEventListener('mousemove', e => {
+  mx = (e.clientX / window.innerWidth  - 0.5) * STRENGTH;
+  my = (e.clientY / window.innerHeight - 0.5) * STRENGTH;
+
+  // update cursor
+  document.getElementById('cursor').style.left = e.clientX + 'px';
+  document.getElementById('cursor').style.top  = e.clientY + 'px';
+  document.getElementById('cursor-ring').style.left = e.clientX + 'px';
+  document.getElementById('cursor-ring').style.top  = e.clientY + 'px';
+
+  // coords display
+  const nx = ((e.clientX/window.innerWidth)*100).toFixed(2);
+  const ny = ((e.clientY/window.innerHeight)*100).toFixed(2);
+  document.getElementById('coords').textContent = nx + ' / ' + ny;
+});
+
+function animateWorld() {
+  cx += (mx - cx) * 0.06;
+  cy += (my - cy) * 0.06;
+  document.getElementById('world').style.transform = `translate(${-cx}px,${-cy}px)`;
+  requestAnimationFrame(animateWorld);
+}
+
+// ── INTRO ────────────────────────────────────────────
+function enterSite() {
+  const intro = document.getElementById('intro');
+  intro.style.transition = 'opacity .8s';
+  intro.style.opacity = '0';
+  setTimeout(() => { intro.style.display = 'none'; }, 800);
+}
+
+// ── OVERLAY ──────────────────────────────────────────
+function openOverlay(tag, html) {
+  document.getElementById('overlay-tag').textContent = tag;
+  document.getElementById('overlay-body').innerHTML = html;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.cursor = 'auto';
+}
+function closeOverlay() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.cursor = 'none';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeOverlay(); });
+
+// ── CONTENT DATA ──────────────────────────────────────
+const articleData = {
+  thrift:{
+    tag:'Fashion · Exhibit A', title:'THE THRIFT ECONOMY',
+    meta:'Arjun Mehta · March 2026 · 8 min read',
+    lead:'From Sarojini Nagar hauls to curated Instagram drops, a generation built an entire aesthetic universe on the rejection of the mainstream retail complex.',
+    body:`<h3>The Market as Medium</h3><p>Walk through Sarojini Nagar on a Saturday morning and you will not find tourists. You will find 22-year-olds with phones clamped between their shoulders, FaceTiming their friends in Pune about a pair of cargo pants. You will find people who understand, at a gut level, that fashion is not what you buy — it's what you know.</p><p>This is the thrift economy. It runs on information asymmetry, cultural fluency, and a deep distrust of anything that asks too much for too little.</p><blockquote>"We're not anti-consumption. We're anti-stupidity. Why pay 8,000 rupees for a fast-fashion brand when you can find something better for 400?"</blockquote><h3>From Necessity to Aesthetic</h3><p>The thrift economy didn't emerge from ideology. It emerged from a generation with less money, more visual sophistication, and social media that made global fashion immediately legible. When you can see Depop in London and Margiela resale in Tokyo — then look at your local budget — you either check out or get creative. Indian GenZ got creative.</p>`,
+    tags:['Fashion','GenZ','Streetwear','Economy','India']
+  },
+  floors:{
+    tag:'Rave Culture · Exhibit A', title:"FLOORS WITHOUT WALLS",
+    meta:'Priya Nair · March 2026 · 6 min read',
+    lead:"From Anjuna Beach parties to underground Bombay techno — the full, strange lineage of India's dancefloor underground.",
+    body:`<h3>It Started with Goa</h3><p>Before it was a brand — before it was a genre name, a package holiday, a Spotify playlist — Goa trance was a place. It was the Anjuna flea market car park at 3am. Travellers who had come to Goa and, somewhere in the process of staying too long, invented something new.</p><p>The sound was genuinely strange: repetitive, psychedelic, built for dancing in sand with the Arabian Sea nearby. It became Goa trance. Then psy-trance. Then a global export India spent twenty years being embarrassed about.</p><blockquote>"Goa trance was this outsider thing for so long. The Indian rave scene had to quietly grow up in its shadow before it could claim it."</blockquote><h3>What 2026 Looks Like</h3><p>The Indian rave scene of 2026 is simultaneously more visible and more underground than ever. Proper venues now exist. But the energy that matters is still happening off the main stage — in WhatsApp groups with location pins that change three times before the night is over.</p>`,
+    tags:['Rave','Techno','Goa','History','Underground']
+  },
+  queer:{
+    tag:'Identity · Exhibit A', title:'DRESSING AGAINST THE GRAIN',
+    meta:'Siya Kapoor · March 2026 · 9 min read',
+    lead:'How queer communities are shaping the most radical edge of Indian street fashion — and doing it in full view.',
+    body:`<h3>Visibility as Politics</h3><p>To dress queerly in urban India in 2026 is to make an argument. Not the argument it used to make — of survival, of careful disclosure — but a different, louder argument. An argument about what the street looks like when you actually look at it.</p><blockquote>"I'm not dressing to be understood. I'm dressing to be seen. Those are different things. Understanding takes time. Being seen happens immediately."</blockquote><h3>The Drag Influence</h3><p>The drag scene in Indian metros over the last five years has had an outsize influence on street fashion around it. Elements that were drag-specific three years ago — extreme proportions, gender-ambiguous silhouettes — are now visible on the street, in the thrift accounts, in the homegrown labels.</p>`,
+    tags:['Identity','Queer','Fashion','Politics','Visibility']
+  },
+  psy:{
+    tag:'Music · Exhibit A', title:'THE PSY-TRANCE REVIVAL',
+    meta:'Ananya Rao · March 2026 · 7 min read',
+    lead:"Why the sound of Goa in the 90s is the sound of India's warehouses in 2026.",
+    body:`<h3>The Sound That Wouldn't Die</h3><p>Psy-trance has been declared dead more times than most genres have been declared alive. It was too fast, too repetitive, too associated with a moment that had passed. The world moved on. Psy-trance did not.</p><p>A genre that has never been cool enough to become uncool occupies a very specific kind of freedom. It doesn't have to worry about what it used to be.</p><blockquote>"My parents went to Goa trance parties in the 90s. I play psy-trance sets in Delhi basements. It's the same sound and it's completely different. This music carries time inside it."</blockquote><h3>The GenZ Inheritance</h3><p>The generation currently reviving psy-trance in India didn't come to it through nostalgia. They came through YouTube rabbit holes, discovering Astrix and Infected Mushroom and then finding the Indian context was richer and stranger than anything they'd expected.</p>`,
+    tags:['Psy-Trance','Music','Rave','GenZ','Revival']
+  }
+};
+
+const brandData = {
+  kaasaw:{name:'KAASAW',city:'Mumbai',abbr:'KAS',tag:'Exhibit B — Brands',
+    desc:'Deconstructed silhouettes rooted in Dalit Bahujan identity. Handwoven cotton, raw edges, no apologies.',
+    story:'KAASAW began in Dharavi in 2022 when founder Rohini Kamble started reworking surplus fabric into pieces that reflected a Dalit Bahujan identity the mainstream fashion industry had never thought to represent. The name comes from the Marathi word for "crow" — intelligence, memory, and survival.',
+    meta:[{l:'Founded',v:'2022'},{l:'Based',v:'Mumbai, MH'},{l:'Category',v:'Womenswear'},{l:'Price',v:'₹2.5K – ₹18K'}]},
+  oblique:{name:'OBLIQUE',city:'Bengaluru',abbr:'OBL',tag:'Exhibit B — Brands',
+    desc:'Streetwear that takes from temple architecture and returns it as bombers and wide-leg cuts.',
+    story:'Founder Dev Sharma spent three years studying Hoysala temple architecture before making his first garment. The relationship is structural, not decorative — the rhythm of columns, the logic of proportion systems — these become the grammar of pattern-cutting.',
+    meta:[{l:'Founded',v:'2023'},{l:'Based',v:'Bengaluru, KA'},{l:'Category',v:'Unisex Streetwear'},{l:'Price',v:'₹3.5K – ₹22K'}]},
+  murmur:{name:'MURMUR',city:'Delhi',abbr:'MRM',tag:'Exhibit B — Brands',
+    desc:'Unisex, unapologetic. Surplus fabric sourced from garment factories, remixed into something new.',
+    story:"MURMUR was founded on a simple premise: Delhi's garment industry produces more fabric than it uses, and that excess is interesting. Founder Tanveer Ali started buying end-of-roll stock from Noida factories in 2021. The constraint of found material produced better design decisions than a blank canvas.",
+    meta:[{l:'Founded',v:'2021'},{l:'Based',v:'Delhi'},{l:'Category',v:'Unisex'},{l:'Price',v:'₹1.8K – ₹12K'}]},
+  noir:{name:'NOIR DUST',city:'Goa',abbr:'NOI',tag:'Exhibit B — Brands',
+    desc:'Rave-ready clubwear that works on a beach at 4am. Minimal, dark, built for movement.',
+    story:"NOIR DUST was designed for a specific environment: the outdoor party at the end of a long night, warm enough for skin but cold enough for a layer, after six hours of dancing. The clothes are built around that constraint with unusual precision.",
+    meta:[{l:'Founded',v:'2022'},{l:'Based',v:'Goa'},{l:'Category',v:'Clubwear'},{l:'Price',v:'₹2K – ₹14K'}]},
+  needle:{name:'NEEDLE',city:'Chennai',abbr:'NDL',tag:'Exhibit B — Brands',
+    desc:'Zine-culture-meets-garment. Every piece is numbered. Every season is a limited print run.',
+    story:'NEEDLE treats each season as a zine: a finite print run, a specific number, a collector\'s logic applied to clothing. Every piece is hand-numbered with a sewn label. A piece labeled 034/150 is the 34th of 150 made. When the run is sold, it\'s gone.',
+    meta:[{l:'Founded',v:'2022'},{l:'Based',v:'Chennai, TN'},{l:'Category',v:'Unisex Graphic'},{l:'Price',v:'₹1.5K – ₹8K'}]},
+};
+
+const musicData = {
+  kohra:{num:'01',title:'Desert Circuit',artist:'Kohra',genre:'Techno',
+    blurb:'Kohra is one of the defining voices of Indian techno. Delhi-based, operating at the intersection of minimalism and controlled intensity. Desert Circuit captures the hypnotic quality that has made him essential listening.',
+    spotify:'https://open.spotify.com/embed/track/4cluDES4hQEUhmXj6TXkSo?utm_source=generator&theme=0'},
+  blot:{num:'02',title:'Fluorescent',artist:'BLOT!',genre:'Psy-Trance',
+    blurb:"BLOT! is the project most responsible for keeping Goa's psy-trance lineage alive for a new generation. Fluorescent is peak BLOT! — the squelch, the spiral, the sense that something ancient and alien is communicating through a synthesiser.",
+    spotify:'https://open.spotify.com/embed/track/6y0igZArWVi6Iz1rsjh3K1?utm_source=generator&theme=0'},
+  nucleya:{num:'03',title:'Red Earth',artist:'Nucleya',genre:'Bass / Electronic',
+    blurb:"Nucleya occupies a unique space in Indian electronic music — too bass-heavy for the festival crowd, too polished for the underground, too Indian for the global market. Red Earth is the track that makes all of that irrelevant.",
+    spotify:'https://open.spotify.com/embed/track/6HZILIRieu8S0iqY8kIKhj?utm_source=generator&theme=0'},
+};
+
+// ── OPEN FUNCTIONS ────────────────────────────────────
+function openArticle(slug) {
+  const d = articleData[slug]; if(!d) return;
+  openOverlay(d.tag, `
+    <div class="overlay-meta">${d.meta}</div>
+    <h1>${d.title}</h1>
+    <div class="o-lead">${d.lead}</div>
+    ${d.body}
+    <div class="overlay-tags">${d.tags.map(t=>`<span class="overlay-tag">${t}</span>`).join('')}</div>
+  `);
+}
+
+function openBrand(slug) {
+  const d = brandData[slug]; if(!d) return;
+  openOverlay(d.tag, `
+    <div class="brand-ov-header">
+      <div class="brand-ov-city">${d.city}</div>
+      <h1>${d.name}</h1>
+      <p style="margin-top:12px;">${d.desc}</p>
+    </div>
+    <p>${d.story}</p>
+    <div class="brand-ov-meta">
+      ${d.meta.map(m=>`<div class="bom-item"><div class="bom-label">${m.l}</div><div class="bom-val">${m.v}</div></div>`).join('')}
+    </div>
+  `);
+}
+
+function openMusic(slug) {
+  const d = musicData[slug]; if(!d) return;
+  openOverlay('Exhibit C — Music', `
+    <div class="music-ov-num">${d.num}</div>
+    <h1>${d.title.toUpperCase()}</h1>
+    <div class="overlay-meta">${d.artist} · ${d.genre}</div>
+    <p style="margin-top:16px;">${d.blurb}</p>
+    <div class="music-ov-player">
+      <iframe src="${d.spotify}" width="100%" height="152" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+  `);
+}
+
+function openManifesto() {
+  openOverlay('Exhibit E — About', `
+    <h1>MANIFESTO</h1>
+    <div class="o-lead">"We didn't ask for a seat at the table. We built our own floor."</div>
+    <p>KAAAND exists because Indian GenZ culture is the most interesting thing happening right now, and it was never getting the magazine it deserved.</p>
+    <p>This isn't a nostalgia project. This isn't a trend report. This is a document of what's actually happening — in the dressing rooms, on the floors, in the studios, in the streets.</p>
+    <p>We cover fashion because fashion here is political. We cover music because the rave scene is a resistance culture. We profile brands because the homegrown movement is an economic revolution happening in plain sight.</p>
+    <blockquote>KAAAND is a zine in spirit, a magazine in practice. We're based in India and obsessed with what India is becoming — raw, loud, contradictory, and absolutely unignorable.</blockquote>
+    <div class="overlay-tags"><span class="overlay-tag">kaaand.xyz</span><span class="overlay-tag">Issue 00</span><span class="overlay-tag">India · 2026</span></div>
+  `);
+}
+
+function openIssue() {
+  openOverlay('Exhibit D — Archive', `
+    <h1>ISSUE 00<br>THE ORIGIN</h1>
+    <div class="overlay-meta">Vol. 1 · March 2026 · India</div>
+    <div class="o-lead">The first issue of KAAAND. Five features, eight brand profiles, three music essays. The ground floor of the most important magazine in India right now.</div>
+    <p>Issue 00 establishes the grammar of KAAAND — what we cover, how we cover it, and why. It is not a soft launch. It is a statement.</p>
+    <p>Hard copies are available. The PDF is live. The conversation has started.</p>
+    <div class="overlay-tags"><span class="overlay-tag">↗ Read Online</span><span class="overlay-tag">↓ Download PDF</span><span class="overlay-tag">Order Hard Copy</span></div>
+  `);
+}
+
+function openSubmit() {
+  openOverlay('Exhibit F — Submit', `
+    <h1>SUBMIT<br>YOUR WORK</h1>
+    <div class="o-lead">Issue 01 is open. We want writers, photographers, stylists, and artists embedded in Indian underground culture.</div>
+    <form id="s-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <div class="s-form-group"><label>Name</label><input name="name" placeholder="Your name" required></div>
+      <div class="s-form-group"><label>Email</label><input type="email" name="email" placeholder="your@email.com" required></div>
+      <div class="s-form-group"><label>Type</label>
+        <select name="type" required>
+          <option value="">Select</option>
+          <option>Fashion Editorial</option><option>Essay / Criticism</option>
+          <option>Photography</option><option>Brand Profile</option>
+          <option>Music Writing</option><option>Illustration</option>
+        </select>
+      </div>
+      <div class="s-form-group"><label>Pitch</label><textarea name="message" placeholder="Tell us your idea..." required></textarea></div>
+      <input type="hidden" name="_subject" value="KAAAND Submission">
+      <button class="s-submit" type="submit" id="s-btn">Send It →</button>
+    </form>
+    <div class="s-success" id="s-success">
+      <strong>Received.</strong>
+      <p>We'll be in touch. Keep making noise.</p>
+    </div>
+  `);
+
+  setTimeout(() => {
+    const form = document.getElementById('s-form');
+    if (!form) return;
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('s-btn');
+      btn.disabled = true; btn.textContent = 'Sending...';
+      try {
+        const res = await fetch(this.action,{method:'POST',body:new FormData(this),headers:{'Accept':'application/json'}});
+        if(res.ok){
+          form.style.display='none';
+          document.getElementById('s-success').style.display='block';
+        } else {
+          btn.disabled=false; btn.textContent='Send It →';
+        }
+      } catch { btn.disabled=false; btn.textContent='Send It →'; }
+    });
+  }, 100);
+}
+
+// ── INIT ──────────────────────────────────────────────
+placeNodes();
+drawConnections();
+animateWorld();
+window.addEventListener('resize', () => { placeNodes(); drawConnections(); });
+</script>
 </body>
 </html>
